@@ -1,4 +1,9 @@
 // Main Script version 1.0
+// v1.1 - Tentative update/optimization of evaluation function (sum score)
+// Old ver- Positions evaluated: 3508
+// Time: 0.184s
+// Positions/s: 19065.217391304348
+
 
 var board,
     game = new Chess();
