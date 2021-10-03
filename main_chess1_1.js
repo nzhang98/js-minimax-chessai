@@ -7,22 +7,24 @@
 
 var board,
     game = new Chess();
-
+var globalSum = 0;
 // Minimax Routine starts here
 
-var mmRoot = function(depth, game, isMaximisingPlayer) {
+var mmRoot = function(depth, game, isMaximisingPlayer, globalSum) {
     // Root of the minimax routine. 
     // legalMoves represents 'children' of node
     var legalMoves = game.ugly_moves();
     var bestMoveScore = -Infinity;
     var bestMove;
-
+    
+    console.log('depth: ', depth, 'globSum: ', globalSum)
     for(var i = 0; i < legalMoves.length; i++) {
 
         var newMove = legalMoves[i];
-        game.ugly_move(newMove);
-
-        var value = minimax(depth - 1, game, -Infinity, Infinity, !isMaximisingPlayer);
+        prettyMove = game.ugly_move(newMove);
+        
+        console.log('prettyMove: ',prettyMove)
+        var value = minimax(depth - 1, game, -Infinity, Infinity, !isMaximisingPlayer, globalSum);
         game.undo();
 
         if(value >= bestMoveScore) {
@@ -33,7 +35,7 @@ var mmRoot = function(depth, game, isMaximisingPlayer) {
     return [bestMove, bestMoveScore];
 };
 
-var minimax = function (depth, game, alpha, beta, isMaximisingPlayer) {
+var minimax = function (depth, game, alpha, beta, isMaximisingPlayer, sum) {
     positionCount++;
 
     if (depth === 0) {
@@ -46,8 +48,11 @@ var minimax = function (depth, game, alpha, beta, isMaximisingPlayer) {
         var bestMoveScore = -Infinity;
         for (var i = 0; i < legalMoves.length; i++) {
             var currMove = game.ugly_move(legalMoves[i]);
-            bestMoveScore = Math.max(bestMoveScore, minimax(depth - 1, game, alpha, beta, !isMaximisingPlayer));
-            game.undo();
+            console.log('depth: ', depth, currMove)
+            var newSum = evaluateBoard_incremental(game, currMove, sum);
+            bestMoveScore = Math.max(
+                bestMoveScore, 
+                minimax(depth - 1, game, alpha, beta, !isMaximisingPlayer, newSum));
             alpha = Math.max(alpha, bestMoveScore);
             if (beta <= alpha) {
                 return bestMoveScore;
@@ -58,7 +63,11 @@ var minimax = function (depth, game, alpha, beta, isMaximisingPlayer) {
         var bestMoveScore = Infinity;
         for (var i = 0; i < legalMoves.length; i++) {
             var currMove = game.ugly_move(legalMoves[i]);
-            bestMoveScore = Math.min(bestMoveScore, minimax(depth - 1, game, alpha, beta, !isMaximisingPlayer));
+            console.log('depth: ', depth, currMove)
+            var newSum = evaluateBoard_incremental(game, currMove, sum);
+            bestMoveScore = Math.min(
+                bestMoveScore, 
+                minimax(depth - 1, game, alpha, beta, !isMaximisingPlayer, newSum));
             game.undo();
             beta = Math.min(beta, bestMoveScore);
             if (beta <= alpha) {
@@ -81,6 +90,103 @@ var evaluateBoard = function (board) {
     return totalEvaluation;
 };
 
+function evaluateBoard_incremental(game, move, prevSum, color) {
+
+    if (game.in_checkmate()) {
+  
+      // Opponent is in checkmate (good for us)
+      if (move.color === color) {
+        return Infinity;
+      }
+      // Our king's in checkmate (bad for us)
+      else {
+        return -Infinity;
+      }
+    }
+  
+    if (game.in_draw() || game.in_threefold_repetition() || game.in_stalemate())
+    {
+      return 0;
+    }
+  
+    if (game.in_check()) {
+      // Opponent is in check (good for us)
+      if (move.color === color) {
+        prevSum += 50;
+      }
+      // Our king's in check (bad for us)
+      else {
+        prevSum -= 50;
+      }
+    }
+  
+    var from = [
+      8 - parseInt(move.from[1]),
+      move.from.charCodeAt(0) - 'a'.charCodeAt(0),
+    ];
+    var to = [
+      8 - parseInt(move.to[1]),
+      move.to.charCodeAt(0) - 'a'.charCodeAt(0),
+    ];
+  
+    // Change endgame behavior for kings
+    if (prevSum < -1500) {
+      if (move.piece === 'k') {
+        move.piece = 'k_e';
+      }
+      // Kings can never be captured
+      // else if (move.captured === 'k') {
+      //   move.captured = 'k_e';
+      // }
+    }
+  
+    if ('captured' in move) {
+      // Opponent piece was captured (good for us)
+      if (move.color === color) {
+        prevSum +=
+          weights[move.captured] +
+          pstOpponent[move.color][move.captured][to[0]][to[1]];
+      }
+      // Our piece was captured (bad for us)
+      else {
+        prevSum -=
+          weights[move.captured] +
+          pstSelf[move.color][move.captured][to[0]][to[1]];
+      }
+    }
+  
+    if (move.flags.includes('p')) {
+      // NOTE: promote to queen for simplicity
+      move.promotion = 'q';
+  
+      // Our piece was promoted (good for us)
+      if (move.color === color) {
+        prevSum -=
+          weights[move.piece] + pstSelf[move.color][move.piece][from[0]][from[1]];
+        prevSum +=
+          weights[move.promotion] +
+          pstSelf[move.color][move.promotion][to[0]][to[1]];
+      }
+      // Opponent piece was promoted (bad for us)
+      else {
+        prevSum +=
+          weights[move.piece] + pstSelf[move.color][move.piece][from[0]][from[1]];
+        prevSum -=
+          weights[move.promotion] +
+          pstSelf[move.color][move.promotion][to[0]][to[1]];
+      }
+    } else {
+      // The moved piece still exists on the updated board, so we only need to update the position value
+      console.log(move.piece)
+      console.log(game.board()[to[0]][to[1]])
+      console.log(to[0], to[1])
+      prevSum += getPieceValue(game.board()[to[0]][to[1]], to[0], to[1])
+      prevSum -= getPieceValue(game.board()[from[0]][from[1]], from[0], from[1])
+      console.log(prevSum)
+    }
+  
+    return prevSum;
+  }
 var reverseArray = function(array) {
     return array.slice().reverse();
 };
@@ -216,12 +322,13 @@ var getBestMove = function (game) {
     if (game.game_over()) {
         alert('Game over');
     }
-
+    var globalSum = evaluateBoard(game.board());
     positionCount = 0;
     var depth = parseInt($('#search-depth').find(':selected').text());
 
     var d = new Date().getTime();
-    var [bestMove, bestMoveScore] = mmRoot(depth, game, true);
+    var [bestMove, bestMoveScore] = mmRoot(depth, game, true, globalSum);
+    console.log('bestMove :', bestMove, 'bestMoveScore: ', bestMoveScore)
     var d2 = new Date().getTime();
     var moveTime = (d2 - d);
     var positionsPerS = ( positionCount * 1000 / moveTime);
