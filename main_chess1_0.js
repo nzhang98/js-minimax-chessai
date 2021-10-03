@@ -1,3 +1,5 @@
+// Main Script version 1.0
+
 var board,
     game = new Chess();
 
@@ -203,7 +205,6 @@ var makeBestMove = function () {
         alert('Game over');
     }
 };
-
 
 var positionCount;
 var getBestMove = function (game) {
