@@ -1,11 +1,11 @@
 var board,
     game = new Chess();
 
-/*The "AI" part starts here */
+// Minimax Routine starts here
 
 var mmRoot = function(depth, game, isMaximisingPlayer) {
     // Root of the minimax routine. 
-    // legalMoves represents children of node
+    // legalMoves represents 'children' of node
     var legalMoves = game.ugly_moves();
     var bestMoveScore = -Infinity;
     var bestMove;
@@ -61,6 +61,8 @@ var minimax = function (depth, game, alpha, beta, isMaximisingPlayer) {
         return bestMoveScore;
     }
 };
+
+// Board Evaluation functions starts here 
 
 var evaluateBoard = function (board) {
     var totalEvaluation = 0;
@@ -182,7 +184,7 @@ var getPieceValue = function (piece, x, y) {
 };
 
 
-/* board visualization and games state handling */
+// Game state and Board Visualization Configurations start here
 
 var onDragStart = function (source, piece, position, orientation) {
     if (game.in_checkmate() === true || game.in_draw() === true ||
