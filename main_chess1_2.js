@@ -22,7 +22,7 @@ var mmRoot = function(depth, game, isMaximisingPlayer) {
         var newMove = legalMoves[i];
         game.ugly_move(newMove);
 
-        var value = minimax(depth - 1, game, -Infinity, Infinity, !isMaximisingPlayer);
+        var value = minimax(game, depth - 1, -Infinity, Infinity, !isMaximisingPlayer);
         game.undo();
 
         if(value >= bestMoveScore) {
@@ -33,7 +33,7 @@ var mmRoot = function(depth, game, isMaximisingPlayer) {
     return [bestMove, bestMoveScore];
 };
 
-var minimax = function (depth, game, alpha, beta, isMaximisingPlayer) {
+var minimax = function (game, depth, alpha, beta, isMaximisingPlayer) {
     positionCount++;
 
     if (depth === 0) {
@@ -45,8 +45,9 @@ var minimax = function (depth, game, alpha, beta, isMaximisingPlayer) {
     if (isMaximisingPlayer) {
         var bestMoveScore = -Infinity;
         for (var i = 0; i < legalMoves.length; i++) {
-            var currMove = game.ugly_move(legalMoves[i]);
-            bestMoveScore = Math.max(bestMoveScore, minimax(depth - 1, game, alpha, beta, !isMaximisingPlayer));
+            game.ugly_move(legalMoves[i]);
+            bestMoveScore = Math.max(bestMoveScore, 
+                minimax(game, depth - 1, alpha, beta, !isMaximisingPlayer));
             game.undo();
             alpha = Math.max(alpha, bestMoveScore);
             if (beta <= alpha) {
@@ -57,8 +58,9 @@ var minimax = function (depth, game, alpha, beta, isMaximisingPlayer) {
     } else {
         var bestMoveScore = Infinity;
         for (var i = 0; i < legalMoves.length; i++) {
-            var currMove = game.ugly_move(legalMoves[i]);
-            bestMoveScore = Math.min(bestMoveScore, minimax(depth - 1, game, alpha, beta, !isMaximisingPlayer));
+            game.ugly_move(legalMoves[i]);
+            bestMoveScore = Math.min(bestMoveScore, 
+                minimax(game, depth - 1, alpha, beta, !isMaximisingPlayer));
             game.undo();
             beta = Math.min(beta, bestMoveScore);
             if (beta <= alpha) {
