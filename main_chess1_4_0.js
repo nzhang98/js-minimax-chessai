@@ -1,9 +1,22 @@
 // Main Script version 1.0
 // v1.2 - Aborted sum eval, optimized getPieceValue to be more streamlined and readable
-// v1.3 - Now we attempt to do transposition table / hashmap
-// Old ver- Positions evaluated: 3508
-// Time: 0.184s
-// Positions/s: 19065.217391304348
+// v1.3 - Implemented a simple 
+// v1.4 - Attempting to implement move ordering logics
+
+// Old ver:
+// Positions evaluated: 52356
+// Hashed: 0
+// Time: 2.943s
+// Positions/s: 17790.01019367992
+// Board Evaluation: 0.5
+// Ai-Board Evaluation: 6.5
+
+// Positions evaluated: 50414
+// Hashed: 170
+// Time: 2.794s
+// Positions/s: 18043.664996420903
+// Board Evaluation: 0.5
+// Ai-Board Evaluation: 6.5
 
 
 var board,
@@ -12,7 +25,7 @@ var board,
 // Minimax Routine starts here
 var ttable = {}
 
-var record = function(hash, score, depth) {
+var updateTtable = function(hash, score, depth) {
     if (!(hash in ttable)) {
         ttable[hash] = {}
     }
@@ -49,13 +62,13 @@ var minimax = function (game, depth, alpha, beta, isMaximisingPlayer) {
         return -evaluateBoard(game.board());
     }
     
-    // let hash = game.fen()
-    // if (hash in ttable) {
-    //     if (ttable[hash].depth >= depth) {
-    //         hashedCount++
-    //         return ttable[hash].score
-    //     }
-    // }
+    let hash = game.fen()
+    if (hash in ttable) {
+        if (ttable[hash].depth >= depth) {
+            hashedCount++
+            return ttable[hash].score
+        }
+    }
 
     var legalMoves = game.ugly_moves();
 
@@ -68,11 +81,11 @@ var minimax = function (game, depth, alpha, beta, isMaximisingPlayer) {
             game.undo();
             alpha = Math.max(alpha, bestMoveScore);
             if (beta <= alpha) {
-                // record(hash, bestMoveScore, depth)
+                updateTtable(hash, bestMoveScore, depth)
                 return bestMoveScore;
             }
         }
-        // record(hash, bestMoveScore, depth)
+        updateTtable(hash, bestMoveScore, depth)
         return bestMoveScore;
     } else {
         var bestMoveScore = Infinity;
@@ -83,11 +96,11 @@ var minimax = function (game, depth, alpha, beta, isMaximisingPlayer) {
             game.undo();
             beta = Math.min(beta, bestMoveScore);
             if (beta <= alpha) {
-                // record(hash, bestMoveScore, depth)
+                updateTtable(hash, bestMoveScore, depth)
                 return bestMoveScore;
             }
         }
-        // record(hash, bestMoveScore, depth)
+        updateTtable(hash, bestMoveScore, depth)
         return bestMoveScore;
     }
 };
