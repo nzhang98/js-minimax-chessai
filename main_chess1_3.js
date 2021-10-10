@@ -1,5 +1,6 @@
 // Main Script version 1.0
 // v1.2 - Aborted sum eval, optimized getPieceValue to be more streamlined and readable
+// v1.3 - Now we attempt to do transposition table / hashmap
 // Old ver- Positions evaluated: 3508
 // Time: 0.184s
 // Positions/s: 19065.217391304348
