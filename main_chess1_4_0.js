@@ -227,10 +227,23 @@ var makeBestMove = function () {
     }
 };
 
+$("#SetFen").click(function () {
+	var fenStr = $("#fenIn").val();	
+    console.log('Inputting: ', fenStr)
+    game.reset();
+	game.load(fenStr);		
+    board.position(game.fen());
+    console.log(game.turn())
+    if (game.turn() === 'b') {
+        setTimeout(() => {makeBestMove(); }, 1000);
+    }
+});
+
 var positionCount;
 var hashedCount;
 var getBestMove = function (game) {
     if (game.game_over()) {
+
         alert('Game over');
     }
 
