@@ -10,6 +10,15 @@ var board,
     game = new Chess();
 
 // Minimax Routine starts here
+var ttable = {}
+
+var record = function(hash, score, depth) {
+    if (!(hash in ttable)) {
+        ttable[hash] = {}
+    }
+    ttable[hash].score = score
+    ttable[hash].depth = depth
+}
 
 var mmRoot = function(depth, game, isMaximisingPlayer) {
     // Root of the minimax routine. 
@@ -36,10 +45,17 @@ var mmRoot = function(depth, game, isMaximisingPlayer) {
 
 var minimax = function (game, depth, alpha, beta, isMaximisingPlayer) {
     positionCount++;
-
     if (depth === 0) {
         return -evaluateBoard(game.board());
     }
+    
+    // let hash = game.fen()
+    // if (hash in ttable) {
+    //     if (ttable[hash].depth >= depth) {
+    //         hashedCount++
+    //         return ttable[hash].score
+    //     }
+    // }
 
     var legalMoves = game.ugly_moves();
 
@@ -52,9 +68,11 @@ var minimax = function (game, depth, alpha, beta, isMaximisingPlayer) {
             game.undo();
             alpha = Math.max(alpha, bestMoveScore);
             if (beta <= alpha) {
+                // record(hash, bestMoveScore, depth)
                 return bestMoveScore;
             }
         }
+        // record(hash, bestMoveScore, depth)
         return bestMoveScore;
     } else {
         var bestMoveScore = Infinity;
@@ -65,9 +83,11 @@ var minimax = function (game, depth, alpha, beta, isMaximisingPlayer) {
             game.undo();
             beta = Math.min(beta, bestMoveScore);
             if (beta <= alpha) {
+                // record(hash, bestMoveScore, depth)
                 return bestMoveScore;
             }
         }
+        // record(hash, bestMoveScore, depth)
         return bestMoveScore;
     }
 };
@@ -195,12 +215,14 @@ var makeBestMove = function () {
 };
 
 var positionCount;
+var hashedCount;
 var getBestMove = function (game) {
     if (game.game_over()) {
         alert('Game over');
     }
 
     positionCount = 0;
+    hashedCount = 0;
     var depth = parseInt($('#search-depth').find(':selected').text());
 
     var d = new Date().getTime();
@@ -208,12 +230,15 @@ var getBestMove = function (game) {
     var d2 = new Date().getTime();
     var moveTime = (d2 - d);
     var positionsPerS = ( positionCount * 1000 / moveTime);
+    // var fen = game.fen()
 
     $('#position-count').text(positionCount);
+    $('#hashed-count').text(hashedCount)
     $('#time').text(moveTime/1000 + 's');
     $('#positions-per-s').text(positionsPerS);
     $('#current-board-evaluation').text(evaluateBoard(game.board())/10)
     $('#ai-board-evaluation').text(-bestMoveScore/10)
+    // $('#current-fen').text(fen)
     return bestMove;
 };
 
