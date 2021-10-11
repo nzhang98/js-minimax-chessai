@@ -2,6 +2,8 @@
 // v1.2 - Aborted sum eval, optimized getPieceValue to be more streamlined and readable
 // v1.3 - Implemented a simple 
 // v1.4 - Attempting to implement move ordering logics
+// v1.4_1 - Added FEN strings
+// v1.4_2 - Implemented very simple ordering logic (captures and promotions)
 
 // Old ver:
 // Positions evaluated: 52356
@@ -33,11 +35,21 @@ var updateTtable = function(hash, score, depth) {
     ttable[hash].depth = depth
 }
 
+var importances = {
+    16: 10,
+    2: 5
+}
+
 var moveSort = function(movesList) {
     for (let move of movesList) {
         move.importance = 0
             + move.flags === 16 ? 10 : 0
             + move.flags === 2 ? 5 : 0
+            //check
+            //attacks
+            //pin
+            //discovered attack
+            //discovered check
     }
     return movesList.sort((a,b) => b.importance - a.importance);
 }
