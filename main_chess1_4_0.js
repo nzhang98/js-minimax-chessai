@@ -33,16 +33,33 @@ var updateTtable = function(hash, score, depth) {
     ttable[hash].depth = depth
 }
 
+var moveSort = function(movesList) {
+    for (let move of movesList) {
+        move.importance = 0
+            + move.flags === 16 ? 10 : 0
+            + move.flags === 2 ? 5 : 0
+    }
+    return movesList.sort((a,b) => b.importance - a.importance);
+}
+
 var mmRoot = function(depth, game, isMaximisingPlayer) {
     // Root of the minimax routine. 
     // legalMoves represents 'children' of node
     var legalMoves = game.ugly_moves();
+
+    const t0 = performance.now();
+    moveSort(legalMoves);
+    console.log(legalMoves)
+    const t1 = performance.now();
+    console.log(`Call to moveSort took ${t1 - t0} milliseconds.`);
+
     var bestMoveScore = -Infinity;
     var bestMove;
 
     for(var i = 0; i < legalMoves.length; i++) {
 
         var newMove = legalMoves[i];
+        // console.log(newMove)
         game.ugly_move(newMove);
 
         var value = minimax(game, depth - 1, -Infinity, Infinity, !isMaximisingPlayer);
@@ -71,7 +88,11 @@ var minimax = function (game, depth, alpha, beta, isMaximisingPlayer) {
     }
 
     var legalMoves = game.ugly_moves();
-
+    const t0 = performance.now();
+    moveSort(legalMoves);
+    console.log(legalMoves)
+    const t1 = performance.now();
+    console.log(`Call to moveSort took ${t1 - t0} milliseconds.`);
     if (isMaximisingPlayer) {
         var bestMoveScore = -Infinity;
         for (var i = 0; i < legalMoves.length; i++) {
@@ -81,13 +102,14 @@ var minimax = function (game, depth, alpha, beta, isMaximisingPlayer) {
             game.undo();
             alpha = Math.max(alpha, bestMoveScore);
             if (beta <= alpha) {
-                updateTtable(hash, bestMoveScore, depth)
+                updateTtable(hash, bestMoveScore, depth);
                 return bestMoveScore;
             }
         }
-        updateTtable(hash, bestMoveScore, depth)
+        updateTtable(hash, bestMoveScore, depth);
         return bestMoveScore;
-    } else {
+    } 
+    else {
         var bestMoveScore = Infinity;
         for (var i = 0; i < legalMoves.length; i++) {
             game.ugly_move(legalMoves[i]);
@@ -96,11 +118,11 @@ var minimax = function (game, depth, alpha, beta, isMaximisingPlayer) {
             game.undo();
             beta = Math.min(beta, bestMoveScore);
             if (beta <= alpha) {
-                updateTtable(hash, bestMoveScore, depth)
+                updateTtable(hash, bestMoveScore, depth);
                 return bestMoveScore;
             }
         }
-        updateTtable(hash, bestMoveScore, depth)
+        updateTtable(hash, bestMoveScore, depth);
         return bestMoveScore;
     }
 };
