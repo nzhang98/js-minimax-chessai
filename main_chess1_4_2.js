@@ -20,6 +20,13 @@
 // Board Evaluation: 0.5
 // Ai-Board Evaluation: 6.5
 
+// Positions evaluated: 36493
+// Hashed: 162
+// Time: 4.012s
+// Positions/s: 9095.962113659023
+// Board Evaluation: 0.5
+// Ai-Board Evaluation: 6.5
+
 
 var board,
     game = new Chess();
@@ -35,16 +42,23 @@ var updateTtable = function(hash, score, depth) {
     ttable[hash].depth = depth
 }
 
-var importances = {
-    16: 10,
-    2: 5
-}
+
 
 var moveSort = function(movesList) {
+
+    var importances = {
+        18: 15,
+        16: 10,
+        2: 5
+    }
+
     for (let move of movesList) {
-        move.importance = 0
-            + move.flags === 16 ? 10 : 0
-            + move.flags === 2 ? 5 : 0
+        if (move.flags in importances) {
+            move.importance = importances[move.flags]
+        }
+        else {
+            move.importance = 0
+        }
             //check
             //attacks
             //pin
