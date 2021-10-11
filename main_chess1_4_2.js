@@ -1,9 +1,12 @@
 // Main Script version 1.0
 // v1.2 - Aborted sum eval, optimized getPieceValue to be more streamlined and readable
-// v1.3 - Implemented a simple 
+// v1.3 - Implemented a simple hashing function
 // v1.4 - Attempting to implement move ordering logics
 // v1.4_1 - Added FEN strings
-// v1.4_2 - Implemented very simple ordering logic (captures and promotions)
+// v1.4_2 - Implemented very simple ordering logic (captures and promotions) TODO: History and killer heuristics
+// v1.5_0 - Beginning to implement quiescence search
+
+// Remember to check hasOwnProperty thing 
 
 // Old ver:
 // Positions evaluated: 52356
@@ -42,8 +45,6 @@ var updateTtable = function(hash, score, depth) {
     ttable[hash].depth = depth
 }
 
-
-
 var moveSort = function(movesList) {
 
     var importances = {
@@ -68,7 +69,26 @@ var moveSort = function(movesList) {
     return movesList.sort((a,b) => b.importance - a.importance);
 }
 
-var mmRoot = function(depth, game, isMaximisingPlayer) {
+var quiescenceSearch = function(game, depth, alpha, beta, isMaximisingPlayer) {
+    quiesceCount++;
+
+    var score = evaluateBoard(game.board())
+    if (score >= beta) {
+        return beta
+    };
+    if (score > alpha) {
+        alpha = score
+    };
+
+    for (var i = 0; i< captureMoves.length; i++) {
+        var newMove = captureMoves[i];
+        game.ugly_move(newMove);
+
+        var value = -quiescenceSearch(game, ) //To be continued
+    }
+}
+
+var mmRoot = function(game, depth,  isMaximisingPlayer) {
     // Root of the minimax routine. 
     // legalMoves represents 'children' of node
     var legalMoves = game.ugly_moves();
@@ -300,7 +320,7 @@ var getBestMove = function (game) {
     var depth = parseInt($('#search-depth').find(':selected').text());
 
     var d = new Date().getTime();
-    var [bestMove, bestMoveScore] = mmRoot(depth, game, true);
+    var [bestMove, bestMoveScore] = mmRoot(game, depth, true);
     var d2 = new Date().getTime();
     var moveTime = (d2 - d);
     var positionsPerS = ( positionCount * 1000 / moveTime);
