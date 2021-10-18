@@ -1,41 +1,9 @@
-// Main Script version 1.0
-// v1.2 - Aborted sum eval, optimized getPieceValue to be more streamlined and readable
-// v1.3 - Implemented a simple hashing function
-// v1.4 - Attempting to implement move ordering logics
-// v1.4_1 - Added FEN strings
-// v1.4_2 - Implemented very simple ordering logic (captures and promotions) TODO: History and killer heuristics
-// v1.5_0 - Beginning to implement quiescence search
-
-// Remember to check hasOwnProperty thing 
-
-// Old ver:
-// Positions evaluated: 52356
-// Hashed: 0
-// Time: 2.943s
-// Positions/s: 17790.01019367992
-// Board Evaluation: 0.5
-// Ai-Board Evaluation: 6.5
-
-// Positions evaluated: 50414
-// Hashed: 170
-// Time: 2.794s
-// Positions/s: 18043.664996420903
-// Board Evaluation: 0.5
-// Ai-Board Evaluation: 6.5
-
-// Positions evaluated: 36493
-// Hashed: 162
-// Time: 4.012s
-// Positions/s: 9095.962113659023
-// Board Evaluation: 0.5
-// Ai-Board Evaluation: 6.5
-
 var board,
     game = new Chess();
 
 // Engine Starts Here
 
-// Transposition Table (Very simple, uses fen strings as hash keys)
+// Transposition Table (Very simple (and not very efficient), uses fen strings as hash keys)
 var ttable = {}
 var updateTtable = function(hash, score, depth) {
     if (!(hash in ttable)) {
@@ -62,11 +30,6 @@ var moveSort = function(movesList) {
         else {
             move.importance = 0
         }
-            //check
-            //attacks
-            //pin
-            //discovered attack
-            //discovered check
     }
     return movesList.sort((a,b) => b.importance - a.importance);
 }
@@ -228,6 +191,7 @@ var pst = {
     ]
 }
 
+// Add source
 var weights = {
     'p': 100,
     'n': 320,
@@ -270,7 +234,7 @@ $("#SetFen").click(function () {
     }
 });
 
-// Actual calls to the MM routine 
+// makeBestMove is called by onDrop (after you make a move)
 var makeBestMove = function () {
     var bestMove = getBestMove(game);
     game.ugly_move(bestMove);
@@ -282,11 +246,12 @@ var makeBestMove = function () {
     }
 };
 
+// mmRoot called here, additional information variables such as positionCount, 
+// performance computation and others are also handled here
 var positionCount;
 var hashedCount;
 var getBestMove = function (game) {
     if (game.game_over()) {
-
         alert('Game over');
     }
 
@@ -309,6 +274,7 @@ var getBestMove = function (game) {
     return bestMove;
 };
 
+// Più carino
 var renderMoveHistory = function (moves) {
     var historyElement = $('#move-history').empty();
     historyElement.empty();
