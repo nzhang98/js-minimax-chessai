@@ -30,13 +30,13 @@
 // Board Evaluation: 0.5
 // Ai-Board Evaluation: 6.5
 
-
 var board,
     game = new Chess();
 
-// Minimax Routine starts here
-var ttable = {}
+// Engine Starts Here
 
+// Transposition Table (Very simple, uses fen strings as hash keys)
+var ttable = {}
 var updateTtable = function(hash, score, depth) {
     if (!(hash in ttable)) {
         ttable[hash] = {}
@@ -45,8 +45,10 @@ var updateTtable = function(hash, score, depth) {
     ttable[hash].depth = depth
 }
 
+// Move Ordering
 var moveSort = function(movesList) {
-
+    // Very simple move ordering logics. 
+    // flags are: 2 -> Capture, 16-> Promotion, 18 -> Promotion+Capture
     var importances = {
         18: 15,
         16: 10,
@@ -69,35 +71,12 @@ var moveSort = function(movesList) {
     return movesList.sort((a,b) => b.importance - a.importance);
 }
 
-var quiescenceSearch = function(game, depth, alpha, beta, isMaximisingPlayer) {
-    quiesceCount++;
 
-    var score = evaluateBoard(game.board())
-    if (score >= beta) {
-        return beta
-    };
-    if (score > alpha) {
-        alpha = score
-    };
-
-    for (var i = 0; i< captureMoves.length; i++) {
-        var newMove = captureMoves[i];
-        game.ugly_move(newMove);
-
-        var value = -quiescenceSearch(game, ) //To be continued
-    }
-}
-
+// Root of the minimax routine. 
 var mmRoot = function(game, depth,  isMaximisingPlayer) {
-    // Root of the minimax routine. 
-    // legalMoves represents 'children' of node
+    // legalMoves represents children of node
     var legalMoves = game.ugly_moves();
-
-    const t0 = performance.now();
     moveSort(legalMoves);
-    console.log(legalMoves)
-    const t1 = performance.now();
-    console.log(`Call to moveSort took ${t1 - t0} milliseconds.`);
 
     var bestMoveScore = -Infinity;
     var bestMove;
@@ -105,7 +84,6 @@ var mmRoot = function(game, depth,  isMaximisingPlayer) {
     for(var i = 0; i < legalMoves.length; i++) {
 
         var newMove = legalMoves[i];
-        // console.log(newMove)
         game.ugly_move(newMove);
 
         var value = minimax(game, depth - 1, -Infinity, Infinity, !isMaximisingPlayer);
@@ -134,11 +112,7 @@ var minimax = function (game, depth, alpha, beta, isMaximisingPlayer) {
     }
 
     var legalMoves = game.ugly_moves();
-    const t0 = performance.now();
     moveSort(legalMoves);
-    console.log(legalMoves)
-    const t1 = performance.now();
-    console.log(`Call to moveSort took ${t1 - t0} milliseconds.`);
     if (isMaximisingPlayer) {
         var bestMoveScore = -Infinity;
         for (var i = 0; i < legalMoves.length; i++) {
