@@ -102,7 +102,8 @@ var minimax = function (game, depth, alpha, beta, isMaximisingPlayer) {
     if (depth === 0) {
         return -evaluateBoard(game.board());
     }
-    
+    // Transposition table, return previously computed score if 
+    // position already reached at same or higher depth than current
     let hash = game.fen()
     if (hash in ttable) {
         if (ttable[hash].depth >= depth) {
@@ -148,7 +149,6 @@ var minimax = function (game, depth, alpha, beta, isMaximisingPlayer) {
 };
 
 // Board Evaluation functions starts here 
-
 var evaluateBoard = function (board) {
     var totalEvaluation = 0;
     for (var i = 0; i < 8; i++) {
@@ -249,8 +249,7 @@ var getPieceValue = function (piece, x, y) {
             -(weights[piece.type] + reverseArray(pst[piece.type])[y][x])
 };
 
-// Game state and Board Visualization Configurations start here
-
+// Game state and Board Visualization Configurations
 var onDragStart = function (source, piece, position, orientation) {
     if (game.in_checkmate() === true || game.in_draw() === true ||
         piece.search(/^b/) !== -1) {
@@ -258,17 +257,7 @@ var onDragStart = function (source, piece, position, orientation) {
     }
 };
 
-var makeBestMove = function () {
-    var bestMove = getBestMove(game);
-    game.ugly_move(bestMove);
-    board.position(game.fen());
-    renderMoveHistory(game.history());
-    
-    if (game.game_over()) {
-        alert('Game over');
-    }
-};
-
+// Option to manually set fen position
 $("#SetFen").click(function () {
 	var fenStr = $("#fenIn").val();	
     console.log('Inputting: ', fenStr)
@@ -280,6 +269,18 @@ $("#SetFen").click(function () {
         setTimeout(() => {makeBestMove(); }, 1000);
     }
 });
+
+// Actual calls to the MM routine 
+var makeBestMove = function () {
+    var bestMove = getBestMove(game);
+    game.ugly_move(bestMove);
+    board.position(game.fen());
+    renderMoveHistory(game.history());
+    
+    if (game.game_over()) {
+        alert('Game over');
+    }
+};
 
 var positionCount;
 var hashedCount;
@@ -298,15 +299,13 @@ var getBestMove = function (game) {
     var d2 = new Date().getTime();
     var moveTime = (d2 - d);
     var positionsPerS = ( positionCount * 1000 / moveTime);
-    // var fen = game.fen()
 
     $('#position-count').text(positionCount);
     $('#hashed-count').text(hashedCount)
     $('#time').text(moveTime/1000 + 's');
     $('#positions-per-s').text(positionsPerS);
-    $('#current-board-evaluation').text(evaluateBoard(game.board())/10)
-    $('#ai-board-evaluation').text(-bestMoveScore/10)
-    // $('#current-fen').text(fen)
+    $('#current-board-evaluation').text(evaluateBoard(game.board())/100)
+    $('#ai-board-evaluation').text(-bestMoveScore/100)
     return bestMove;
 };
 
@@ -317,7 +316,6 @@ var renderMoveHistory = function (moves) {
         historyElement.append('<span>' + moves[i] + ' ' + ( moves[i + 1] ? moves[i + 1] : ' ') + '</span><br>')
     }
     historyElement.scrollTop(historyElement[0].scrollHeight);
-
 };
 
 var onDrop = function (source, target) {
