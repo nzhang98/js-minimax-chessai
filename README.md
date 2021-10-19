@@ -1,5 +1,5 @@
 # Minimax with AlphaBeta Pruning for Chess
-Simple Chess AI using minimax with alpha-beta pruning implemented in Javascript. 
+Simple Chess AI using minimax with alpha-beta pruning implemented in Javascript; with rudimentary move-ordering and transposition table.
 
 ## Installation
 The chess engine may be installed locally as follows:
@@ -13,7 +13,9 @@ npm install
 ## Usage
 Once installed locally, one may play against the chess engine by running `npm start` and accessing http://127.0.0.1:8080.
 
-Moreover, the engine has also been deployed online via Heroku and is playable at https://nick-chess.herokuapp.com/.
+Moreover, the engine has also been deployed online via Heroku and is playable at: 
+
+https://nick-chess.herokuapp.com/.
 
 
 ## Credits and Resources
