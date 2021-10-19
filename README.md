@@ -2,7 +2,7 @@
 Simple Chess AI using minimax with alpha-beta pruning implemented in Javascript; with rudimentary move-ordering and transposition table.
 
 ## Installation
-Requires [nodejs](https://nodejs.org/en/)/[npm](https://docs.npmjs.com/)
+Requires [nodejs](https://nodejs.org/en/)/[npm](https://docs.npmjs.com/).\
 The chess engine may be installed locally as follows:
 
 ``` 
