@@ -19,6 +19,10 @@ https://nick-chess.herokuapp.com/.
 
 
 ## Credits and Resources
+Makes use of : 
+ - [Chessboardjs](https://chessboardjs.com/) for board visualization
+ - [Chess.js](https://github.com/jhlywa/chess.js/blob/master/README.md), a Javascript chess library that handles chess move generation/validation, piece placement/movement, and check/checkmate/stalemate detection.
+ 
 https://www.chessprogramming.org/ is an incredible resource for both theory, ideas, applications and pseudocode for chess engines.
 
 Minimax:
