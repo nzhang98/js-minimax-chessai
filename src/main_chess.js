@@ -191,7 +191,7 @@ var pst = {
     ]
 }
 
-// Add source
+// Weights for pieces, same source as above
 var weights = {
     'p': 100,
     'n': 320,
@@ -274,7 +274,6 @@ var getBestMove = function (game) {
     return bestMove;
 };
 
-// Più carino
 var renderMoveHistory = function (moves) {
     var historyElement = $('#move-history').empty();
     historyElement.empty();
