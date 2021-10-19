@@ -2,7 +2,7 @@
     "name": "js-minimax-chessai",
     "version": "1.0.0",
     "description": "",
-    "main": "main_chess.js",
+    "main": "src/main_chess.js",
     "scripts": {
         "start": "http-server ./"
     },
