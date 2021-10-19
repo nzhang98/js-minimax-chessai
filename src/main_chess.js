@@ -86,8 +86,7 @@ var minimax = function (game, depth, alpha, beta, isMaximisingPlayer) {
             game.undo();
             alpha = Math.max(alpha, bestMoveScore);
             if (beta <= alpha) {
-                updateTtable(hash, bestMoveScore, depth);
-                return bestMoveScore;
+                break
             }
         }
         updateTtable(hash, bestMoveScore, depth);
@@ -102,8 +101,7 @@ var minimax = function (game, depth, alpha, beta, isMaximisingPlayer) {
             game.undo();
             beta = Math.min(beta, bestMoveScore);
             if (beta <= alpha) {
-                updateTtable(hash, bestMoveScore, depth);
-                return bestMoveScore;
+                break
             }
         }
         updateTtable(hash, bestMoveScore, depth);
