@@ -1,0 +1,14 @@
+{
+    "name": "js-minimax-chessai",
+    "version": "1.0.0",
+    "description": "",
+    "main": "main_chess.js",
+    "scripts": {
+        "start": "http-server ./"
+    },
+    "author": "Nick Zhang",
+    "licence": "MIT",
+    "dependencies": {
+        "http-server": "^13.0.2"
+    }
+}
