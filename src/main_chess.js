@@ -101,6 +101,7 @@ var minimax = function (game, depth, alpha, beta, isMaximisingPlayer) {
             game.undo();
             beta = Math.min(beta, bestMoveScore);
             if (beta <= alpha) {
+
                 break
             }
         }
