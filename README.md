@@ -2,6 +2,7 @@
 Simple Chess AI using minimax with alpha-beta pruning implemented in Javascript; with rudimentary move-ordering and transposition table.
 
 ## Installation
+Requires [nodejs](https://nodejs.org/en/)/[npm](https://docs.npmjs.com/)
 The chess engine may be installed locally as follows:
 
 ``` 
@@ -18,7 +19,7 @@ Moreover, the engine has also been deployed online via Heroku and is playable at
 [Nick Chess](https://nick-chess.herokuapp.com/).
 
 ## Structure
-The main script is under `src/`
+The main script is under `src/`.\
 It contains both the engine part and the board visualization and actual game state handling.
 
 `index.html` and `style.css` for the GUI
