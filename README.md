@@ -17,12 +17,21 @@ Moreover, the engine has also been deployed online via Heroku and is playable at
 
 https://nick-chess.herokuapp.com/.
 
+## Structure
+The main script is under `src/`
+It contains both the engine part and the board visualization and actual game state handling.
+
+`index.html` and `style.css` for the GUI
+
+`composer.json` and `index.php` are for hosting on Heroku
 
 ## Credits and Resources
+Nick Zhang (nick.zhang@studbocconi.it)
+
 Makes use of : 
  - [Chessboardjs](https://chessboardjs.com/) for board visualization
  - [Chess.js](https://github.com/jhlywa/chess.js/blob/master/README.md), a Javascript chess library that handles chess move generation/validation, piece placement/movement, and check/checkmate/stalemate detection.
- 
+
 https://www.chessprogramming.org/ is an incredible resource for both theory, ideas, applications and pseudocode for chess engines.
 
 Minimax:
