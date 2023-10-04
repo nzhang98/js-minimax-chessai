@@ -14,10 +14,6 @@ npm install
 ## Usage
 Once installed locally, one may play against the chess engine by running `npm start` and accessing http://127.0.0.1:8080
 
-Moreover, the engine has also been deployed online via Heroku and is playable at: 
-
-[Nick Chess](https://nick-chess.herokuapp.com/)
-
 ## Structure
 The main script is under `src/`.\
 It contains both the engine part and the board visualization and actual game state handling.
